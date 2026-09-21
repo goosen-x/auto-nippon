@@ -77,12 +77,23 @@ button { font: inherit; cursor: pointer; }
 }
 
 .stage__video {
+  /* кадр всегда во всю ширину; высота идёт за пропорцией и режется
+     сверху-снизу, а не наоборот, как было бы при object-fit: cover */
+  position: absolute;
+  left: 0;
+  top: 50%;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 60% center;
+  height: auto;
+  transform: translateY(-50%);
   /* лёгкий «дожим» контраста под тёмную тему */
   filter: contrast(1.06) saturate(1.08);
+  /* края кадра растворяются в фоне сцены, иначе на месте обреза
+     остаётся резкая горизонтальная линия; проценты, а не пиксели,
+     чтобы на узком экране растушёвка не съела половину полосы */
+  -webkit-mask-image: linear-gradient(to bottom,
+    transparent 0%, #000 15%, #000 83%, transparent 100%);
+  mask-image: linear-gradient(to bottom,
+    transparent 0%, #000 15%, #000 83%, transparent 100%);
   will-change: transform;
 }
 
@@ -669,7 +680,6 @@ main { position: relative; z-index: 10; }
 @media (max-width: 700px) {
   /* на узких экранах секции длиннее и снап начинает драться с инерцией тача */
   html { scroll-snap-type: none; }
-  .stage__video { object-position: center; }
   .stage__scrim {
     background:
       linear-gradient(to bottom,
